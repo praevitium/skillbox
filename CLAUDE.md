@@ -49,6 +49,34 @@ skillbox/
 5. Add system prompt and branding
 6. Write README with examples
 
+## Skill authoring: inline manifest OR `SKILL.md` (Session 88)
+
+Skills can be declared two ways, and a skillbox may use both:
+
+1. **Inline in `manifest.json`** under `skills[]` — `{ id, name, description, instructions, examples?, requires? }`. Good for short skills.
+2. **As `skills/<id>/SKILL.md` folders** (Anthropic Agent Skills style). YAML frontmatter + a markdown body:
+
+```markdown
+---
+id: explain-hos
+name: Explain Hours of Service
+description: Walk a driver through HOS limits, citing the regulations KB.
+examples:
+  - How many hours can I drive today?
+requires:
+  modalities: [text]
+---
+
+When the user asks about hours of service, retrieve from the KB first via the
+lookup_regulations tool and cite by [n]. …the rest is the skill's instructions.
+```
+
+The loader parses each `SKILL.md` into the same internal `Skill` object as the manifest path. Mapping: `id` ← frontmatter `id` ?? directory name; `name` ← frontmatter `name` ?? id; `description` ← frontmatter; `instructions` ← the markdown body; `examples` / `requires.modalities` ← frontmatter (a flat `modalities:` list also works). `SKILL.md` **wins on an id collision** with a manifest skill (the dedicated file is the richer source). The modality gate applies to both. A blank SKILL.md (no description and no body) is skipped. Frontmatter is read by a minimal built-in parser — no YAML dependency — so stick to scalars, inline `[a, b]` lists, block `- item` lists, and one level of nesting (`requires:` → `modalities:`).
+
+**How skills reach the model (progressive disclosure).** Every loaded skill's `name` + `description` is always advertised in the system prompt (cheap routing). The **full `instructions`** of only the few skills most relevant to the current user turn are injected (scored on shared terms, capped by `MAX_ACTIVE_SKILL_INSTRUCTIONS`). With the agentic loop, an injected skill body is a multi-step playbook the model can actually execute across tool rounds — so write `instructions` as a procedure ("retrieve X, then call tool Y, then …"), not just a description.
+
+The reference migration is `rmo-copilot/skills/explain-hos/SKILL.md` (moved out of the manifest).
+
 ## Opt-in Peer Skillboxes (Session 46)
 
 A skillbox can declare `"loadByDefault": false` on its manifest to ship on disk alongside a primary skillbox without loading on every deploy. Auto-discovery skips the peer unless the operator sets `SKILLBOX_ENABLE=<name>` (comma-separated for multiple). Useful for locale peers, ops-only debug skillboxes, or experimental tool packs that aren't ready for production.
