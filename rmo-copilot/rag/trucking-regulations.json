@@ -1,0 +1,84 @@
+{
+  "entries": [
+    {
+      "id": "hos-canada-overview",
+      "title": "Hours of Service — Federal (Canada) Overview",
+      "content": "Canadian commercial drivers operating south of latitude 60°N are limited to 13 hours of driving time per day and 14 hours of on-duty time per day. After 10 hours of on-duty time, a driver must accumulate 8 consecutive hours off-duty before resuming driving. A 24-hour reset is required at least once every 14 days. North of 60°N the cycle limits differ (up to 15 hours driving, 18 hours on-duty). Daily logs (electronic logging devices) are mandatory for federally regulated carriers. Cycle 1 allows 70 on-duty hours in 7 days; Cycle 2 allows 120 on-duty hours in 14 days with a 24-hour reset after 70 hours.",
+      "source": "Commercial Vehicle Drivers Hours of Service Regulations (SOR/2005-313)",
+      "url": "https://laws-lois.justice.gc.ca/eng/Regulations/SOR-2005-313/index.html",
+      "lastUpdated": "2024-01-15"
+    },
+    {
+      "id": "hos-alberta",
+      "title": "Hours of Service — Alberta (Provincial)",
+      "content": "Alberta adopts the federal Hours of Service rules for federally regulated carriers and applies parallel provincial rules under the Drivers' Hours of Service Regulation (AR 317/2002) for intra-provincial operations. Provincial drivers may drive a maximum of 13 hours per day with 14 hours on-duty maximum. After accumulating 13 hours of driving or 14 hours on-duty, an 8 consecutive hour off-duty period is required. ELDs are not mandated for intra-Alberta operations as of 2024 but paper logs must be kept for 6 months. Agriculture and forestry operations have seasonal exemptions; consult the regulation directly for log-keeping waivers during planting and harvest seasons.",
+      "source": "Alberta Drivers' Hours of Service Regulation (AR 317/2002)",
+      "url": "https://www.canlii.org/en/ab/laws/regu/alta-reg-317-2002/latest/alta-reg-317-2002.html",
+      "lastUpdated": "2024-06-01"
+    },
+    {
+      "id": "dvir-requirements",
+      "title": "Driver Vehicle Inspection Report (DVIR) Requirements",
+      "content": "A pre-trip inspection (DVIR) is required at the start of every shift before operating a commercial motor vehicle. The driver must inspect: brakes (service and parking), steering, lights and reflectors, tires and wheels, windshield wipers, mirrors, coupling devices, cargo securement, emergency equipment (triangles, fire extinguisher), and fuel system. Defects must be classified as major (vehicle must not be operated) or minor (must be repaired within the trip). The completed DVIR must accompany the vehicle and be submitted to the carrier within 20 days. A copy must be retained for 6 months. Trip inspections are also required at intervals during long shifts and at every change of driver.",
+      "source": "National Safety Code Standard 13 — Trip Inspection (CCMTA)",
+      "url": "https://www.ccmta.ca/publications/national-safety-code/",
+      "lastUpdated": "2024-03-10"
+    },
+    {
+      "id": "load-securement-logs",
+      "title": "Load Securement — Logs and Lumber",
+      "content": "Logs and lumber loads must comply with National Safety Code Standard 10 Division 2 (Logs) and Division 3 (Metal Coils & Building Materials). Logs loaded lengthwise require at least one tiedown per stake bunk and a minimum of two tiedowns per stack. Logs loaded crosswise need tiedowns spaced no more than 3.04 m apart with a minimum of two. Bunks must be in good condition; stakes must extend at least to the top of the load. Working Load Limit (WLL) of all tiedowns combined must equal at least 50% of the cargo weight. Tiedowns must be inspected within the first 80 km and at every change of duty status. Friction mats may be used as supplements but not as substitutes for tiedowns.",
+      "source": "National Safety Code Standard 10 — Cargo Securement (CCMTA)",
+      "url": "https://www.ccmta.ca/web/default/files/PDF/NSC_Standard10_-_Sept_2004.pdf",
+      "lastUpdated": "2024-02-20"
+    },
+    {
+      "id": "weight-limits-alberta",
+      "title": "Vehicle Weight and Dimension Limits — Alberta",
+      "content": "Alberta's standard Gross Vehicle Weight (GVW) limit for a tandem-axle truck is 17,000 kg per tandem group. Tridem groups vary by axle spread: 21,000 kg (2.4 m spread) up to 28,000 kg (3.6 m spread). Maximum gross combination weight on standard highways is typically 63,500 kg for a 6-axle tractor-semitrailer. Seasonal weight restrictions (spring road bans) reduce allowable axle weights by 25%–75% on designated highways from approximately March through May; check the Alberta 511 system for current restrictions. Overweight permits are issued by Alberta Transportation. Overall length for a tractor-semitrailer is 23 m (truck-trailer combinations: 25 m).",
+      "source": "Alberta Commercial Vehicle Dimension and Weight Regulation (AR 315/2002)",
+      "url": "https://www.alberta.ca/commercial-vehicle-weight-and-dimensions-regulations",
+      "lastUpdated": "2024-04-01"
+    },
+    {
+      "id": "elds-mandate",
+      "title": "Electronic Logging Devices (ELD) Mandate",
+      "content": "Federally regulated commercial carriers in Canada must use certified Electronic Logging Devices (ELDs) for tracking hours of service. The mandate has been in force since June 12, 2021 with full enforcement as of January 1, 2023. ELDs must be certified by an accredited third-party body (e.g., FPInnovations); a list of certified devices is maintained by Transport Canada. ELD records must be retained for 6 months and made available on demand to an inspector. Drivers may continue paper logs only in narrow exemptions: short-haul (within a 160 km radius), rental periods under 30 days, statutory exemptions, or vehicles manufactured before model year 2000.",
+      "source": "Transport Canada — Electronic Logging Devices",
+      "url": "https://tc.canada.ca/en/road-transportation/electronic-logging-devices",
+      "lastUpdated": "2024-05-15"
+    },
+    {
+      "id": "pre-trip-inspection-procedure",
+      "title": "Pre-Trip Inspection Step-by-Step Procedure",
+      "content": "Approach the vehicle and look underneath for leaks (oil, coolant, fuel, hydraulic fluid). Inspect the engine compartment: belts, hoses, fluid levels (engine oil, coolant, power steering, washer). Check the front of the vehicle: headlights, turn signals, marker lights, windshield, wipers, mirrors. Inspect the fuel tank and battery box on each side. Check all tires for inflation (use a gauge, not a kick), tread depth (minimum 3.2 mm on steer axle, 1.6 mm elsewhere), and damage. Inspect wheel rims and lug nuts. Check the trailer coupling: fifth-wheel jaws closed, kingpin seated, safety chains, electrical and air connections. Inspect cargo securement (straps, chains, tarps). Verify lights at the rear: brake, turn, marker, license plate. Test brakes (service and parking) in the cab before moving. Document all findings on the DVIR.",
+      "source": "National Safety Code Standard 13 — Trip Inspection (CCMTA)",
+      "url": "https://www.ccmta.ca/publications/national-safety-code/",
+      "lastUpdated": "2024-03-10"
+    },
+    {
+      "id": "spring-road-bans",
+      "title": "Spring Road Bans (Weight Restrictions)",
+      "content": "Spring road bans reduce permitted axle weights to protect highways during the spring thaw when subgrade strength drops. In Alberta bans typically run from mid-March to late May depending on road class and weather. A 75% ban allows 75% of normal axle weight; a 50% ban allows 50%, and so on. Drivers must monitor the Alberta 511 traveller information system daily during ban season. Loads that exceed the reduced limits must be re-routed, reduced, or permitted. Operating overweight during a road ban can result in fines from $115 per 100 kg overweight up to several thousand dollars. Some highways (designated 'primary highway truck routes') are exempted from spring bans.",
+      "source": "Alberta Transportation — Road Restrictions and Bans",
+      "url": "https://www.alberta.ca/road-restrictions-and-bans-overview",
+      "lastUpdated": "2024-02-15"
+    },
+    {
+      "id": "rest-break-rules",
+      "title": "Mandatory Rest Breaks and Off-Duty Time",
+      "content": "Under federal HOS rules a driver must take 24 consecutive hours off-duty within every 14 days. Daily, the driver requires 10 hours off-duty in total, 8 of which must be consecutive. The remaining 2 hours can be split into shorter blocks (minimum 30 minutes each) in the sleeper berth or off-duty. A short break of at least 30 minutes is required after 8 hours of cumulative driving — many carriers schedule this around the mandatory 30-minute meal/rest stop. Off-duty time in the sleeper berth that meets the 8/2 split requirement counts toward the daily 10-hour minimum.",
+      "source": "Commercial Vehicle Drivers Hours of Service Regulations §13–15",
+      "url": "https://laws-lois.justice.gc.ca/eng/regulations/SOR-2005-313/",
+      "lastUpdated": "2024-01-15"
+    },
+    {
+      "id": "log-load-tarping",
+      "title": "Tarping and Covering Log Loads",
+      "content": "Log loads typically do not require tarping under Canadian regulations, but lumber, chips, and finished wood products do require coverage when there is a risk of cargo loss or hazard to other road users. Tarps must be secured at all corners and along the sides at intervals not exceeding 3 m. Loose ends and flapping material are violations and can result in citations. Wind speed and direction should be considered when tarping — drivers should not tarp alone in winds exceeding 50 km/h. Some forestry haulers use mesh tarps for bark control on chip trailers; these must meet manufacturer specifications for the load type.",
+      "source": "National Safety Code Standard 10 — General Cargo Securement (CCMTA)",
+      "url": "https://www.ccmta.ca/web/default/files/PDF/NSC_Standard10_-_Sept_2004.pdf",
+      "lastUpdated": "2024-04-22"
+    }
+  ]
+}

@@ -1,0 +1,366 @@
+{
+  "name": "rmo-copilot",
+  "version": "0.16.0",
+  "description": "Rocky Mountain Outlaws lumber + trucking copilot skills, tools, and KB.",
+  "skills": [
+    {
+      "id": "explain-hos",
+      "name": "Explain Hours of Service",
+      "description": "Walk a driver through HOS daily/weekly limits and rest-break rules, with citations to the trucking-regulations KB.",
+      "instructions": "When the user asks about hours of service, on-duty limits, off-duty time, or driving caps, retrieve from the trucking-regulations KB first. Always cite by source number. Distinguish federal (FMCSA) from Alberta-provincial rules when both apply.",
+      "examples": [
+        "How many hours can I drive today?",
+        "When does my 14-hour clock reset?",
+        "Do Alberta HOS rules differ from federal?"
+      ]
+    },
+    {
+      "id": "walk-dvir",
+      "name": "Walk through a DVIR",
+      "description": "Guide the driver through a Driver Vehicle Inspection Report — defect categories, signature requirements, and what to flag.",
+      "instructions": "Help the driver complete a DVIR per Alberta NSC Schedule 1. Collect the nine mandatory fields (carrierName, unitNumber, odometer, location, driverName, defectStatus, plus defects/defectNotes/photos/mechanic signature when relevant). Use the Schedule 1 categories — safety-equipment, braking, coupling, visibility, lights, tires-wheels, steering-suspension — to classify each defect; pick 'other' only when nothing else fits. When the driver confirms the details, call the draft_dvir tool to record the inspection; it requires approval, so the driver will see a confirm prompt before anything is written. A 'major' defect requires a mechanic name on the record before the vehicle can return to service.",
+      "examples": [
+        "Help me fill out my pre-trip inspection",
+        "What counts as a major defect?",
+        "Do I need a DVIR if there are no defects?",
+        "Record a DVIR for unit RMO-44 at Hinton yard, no defects"
+      ]
+    },
+    {
+      "id": "lookup-regulations",
+      "name": "Look up trucking regulations",
+      "description": "Answer regulation questions (weight limits, load securement, road bans) with KB citations.",
+      "instructions": "Treat the trucking-regulations KB as authoritative. If a question is not covered, say so explicitly rather than guessing. Prefer calling the lookup_regulations tool for any factual claim, and quote the returned excerpts with [n] markers.",
+      "examples": [
+        "What are Alberta weight limits for a tridem?",
+        "How do I secure a log load?",
+        "Are spring road bans in effect?"
+      ]
+    },
+    {
+      "id": "web-research",
+      "name": "Research on the web",
+      "description": "Search the public web for current or out-of-KB information and cite the pages returned.",
+      "instructions": "Prefer the trucking-regulations KB (lookup_regulations) for any question that touches HOS, weight limits, road bans, DVIR procedure, or load securement. Reach for web_research only when the question is current-events (weather, road closures, fuel prices, vendor news), explicitly about something outside the KB scope, or the KB lookup returned nothing relevant. Always cite returned pages with [n] markers and quote the excerpt — never paraphrase a source without naming it. If web_research returns no sources, say so explicitly rather than guessing. Pass the optional `recency` arg ('day' / 'week' / 'month' / 'year') for time-sensitive questions and `region` for jurisdiction-specific searches (e.g. 'CA' for Canadian sources).",
+      "examples": [
+        "What's the current diesel price in Edmonton?",
+        "Has there been any news about CN rail strikes this week?",
+        "What's the latest Transport Canada bulletin on winter tire requirements?"
+      ]
+    },
+    {
+      "id": "summarize-pay-period",
+      "name": "Summarize a pay period",
+      "description": "Roll up the driver's recorded timesheets across a pay-period window — total days worked, driving hours, on-duty hours, non-driving on-duty hours, plus per-day breakdown and HOS roll-up warnings (70h-in-7-days cap).",
+      "instructions": "When the user asks 'how many hours did I work this pay period', 'show my last pay period', or 'summarize my timesheets for these dates', call summarize_pay_period. Default to the 'current-pay-period' preset when the user doesn't specify a window; use 'last-pay-period' for retrospectives. Pass explicit from/to YYYY-MM-DD dates only when the user names a non-standard window (e.g. 'May 1 through May 15'). The tool is read-only — no approval needed. Quote the daily breakdown when the user asks for it; surface period-level warnings prominently when present (a 70h-in-7-days breach is a compliance issue, not a footnote).",
+      "examples": [
+        "How many hours did I drive this pay period?",
+        "Summarize my last pay period",
+        "Show my timesheet totals from May 1 to May 15"
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "id": "scrape-current-form",
+      "name": "Scrape current form",
+      "description": "Read the host page's current form (fields, labels, values) so the copilot can reason about what the driver has filled in.",
+      "type": "client",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "formId": {
+            "type": "string",
+            "description": "Optional id of the <form> to scrape. Omit to scrape the focused form."
+          }
+        }
+      }
+    },
+    {
+      "id": "lookup_regulations",
+      "name": "lookup_regulations",
+      "description": "Search the trucking-regulations knowledge base by topic. Returns titled excerpts with source attribution so the copilot can cite [n] in its answer. Optional scoringMode and hybridWeight knobs let the copilot bias toward literal matches when the query contains rare regulation IDs.",
+      "type": "server",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Plain-language topic or question, e.g. 'Alberta tridem weight limits' or 'spring road bans'."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum results to return (1-10). Defaults to 5."
+          },
+          "scoringMode": {
+            "type": "string",
+            "description": "Override the retriever's scoring path: 'lexical' (TF-IDF only — bias for rare proper nouns / regulation IDs), 'embedding' (cosine only), or 'hybrid' (default; min-max-mixed). Invalid values fall back to the configured default."
+          },
+          "hybridWeight": {
+            "type": "number",
+            "description": "Cosine weight in [0,1] when scoringMode is hybrid; lexical gets (1 - weight). Lower values (e.g. 0.3) bias toward literal-match scoring. Only consulted under hybrid mode."
+          }
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "id": "draft_timesheet",
+      "name": "draft_timesheet",
+      "description": "Draft a driver timesheet record from the day's trip details. Returns a structured draft for the driver to review and approve before it is recorded. Flags HOS-cap violations.",
+      "type": "server",
+      "requiresApproval": true,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "driverName": {
+            "type": "string",
+            "description": "Driver's full legal name as it should appear on the timesheet."
+          },
+          "tripDate": {
+            "type": "string",
+            "description": "Date of the trip in YYYY-MM-DD form."
+          },
+          "hoursDriving": {
+            "type": "number",
+            "description": "Hours spent behind the wheel."
+          },
+          "hoursOnDuty": {
+            "type": "number",
+            "description": "Total hours on duty including driving and non-driving work."
+          },
+          "vehicleId": {
+            "type": "string",
+            "description": "Truck or unit identifier (optional)."
+          },
+          "loadType": {
+            "type": "string",
+            "description": "Cargo type, e.g. 'logs', 'dimensional lumber' (optional)."
+          },
+          "tripDescription": {
+            "type": "string",
+            "description": "Free-text notes about route, stops, or unusual conditions (optional)."
+          }
+        },
+        "required": ["driverName", "tripDate", "hoursDriving", "hoursOnDuty"]
+      }
+    },
+    {
+      "id": "draft_dvir",
+      "name": "draft_dvir",
+      "description": "Draft a Driver Vehicle Inspection Report (DVIR) per Alberta NSC Schedule 1. Requires driver approval before the record lands. Returns a structured draft the driver can review, with compliance warnings for missing mechanic signatures on major defects and mismatched defect/status pairs.",
+      "type": "server",
+      "requiresApproval": true,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "carrierName": {
+            "type": "string",
+            "description": "Registered operator name."
+          },
+          "unitNumber": {
+            "type": "string",
+            "description": "Tractor, trailer, or bus identifier (e.g. 'RMO-44')."
+          },
+          "odometer": {
+            "type": "number",
+            "description": "Mileage at the time of inspection."
+          },
+          "location": {
+            "type": "string",
+            "description": "Where the inspection took place (yard, depot, roadside)."
+          },
+          "driverName": {
+            "type": "string",
+            "description": "Inspecting driver's full legal name."
+          },
+          "defectStatus": {
+            "type": "string",
+            "description": "Overall defect status: 'none' (no defects observed), 'minor' (loggable, vehicle remains in service), or 'major' (mechanic certification required before return to service)."
+          },
+          "defects": {
+            "type": "array",
+            "description": "Itemized defects observed during inspection. Required when defectStatus is 'minor' or 'major'. Each entry has a Schedule 1 category and a free-text description.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "description": "Schedule 1 category: 'safety-equipment' | 'braking' | 'coupling' | 'visibility' | 'lights' | 'tires-wheels' | 'steering-suspension' | 'other'."
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Free-text description of the defect."
+                }
+              },
+              "required": ["description"]
+            }
+          },
+          "defectNotes": {
+            "type": "string",
+            "description": "Free-text narrative supplementing the defects list (optional)."
+          },
+          "photos": {
+            "type": "array",
+            "description": "Photo attachments documenting defects (optional). The LLM may have analyzed these to populate defectNotes.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "description": "Resolvable URL or attachment id for the photo."
+                },
+                "caption": {
+                  "type": "string",
+                  "description": "Optional caption describing what the photo shows."
+                }
+              },
+              "required": ["url"]
+            }
+          },
+          "mechanicName": {
+            "type": "string",
+            "description": "Name of the mechanic certifying repairs. Required when defectStatus is 'major'."
+          },
+          "mechanicSignedAt": {
+            "type": "string",
+            "description": "ISO 8601 timestamp when the mechanic signed off (optional, paired with mechanicName)."
+          }
+        },
+        "required": [
+          "carrierName",
+          "unitNumber",
+          "odometer",
+          "location",
+          "driverName",
+          "defectStatus"
+        ]
+      }
+    },
+    {
+      "id": "web_research",
+      "name": "Search the web",
+      "description": "Search the public web for current information not in the regulations KB. Returns web results with source URLs. Use for current events, diesel prices, weather, road conditions, news. Supports Tavily (premium), Brave Search, or DuckDuckGo (free fallback).",
+      "type": "server",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Plain-language search query, e.g. 'Edmonton diesel price today' or 'Transport Canada winter tire bulletin 2026'."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum results to return (1-10). Defaults to 5."
+          },
+          "recency": {
+            "type": "string",
+            "description": "Bias toward recently-published pages: 'day' | 'week' | 'month' | 'year'. Silently ignored on providers that don't expose freshness controls."
+          },
+          "region": {
+            "type": "string",
+            "description": "BCP-47 locale ('en-CA') or ISO country code ('CA') for region-biased ranking. Silently ignored on providers that don't expose a region knob."
+          }
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "id": "summarize_pay_period",
+      "name": "summarize_pay_period",
+      "description": "Roll up the driver's recorded timesheets across a pay-period window. Returns total days worked, driving hours, on-duty hours, non-driving on-duty hours, a chronological per-day breakdown, and period-level HOS warnings (70h-in-7-days cap). Read-only — no approval needed. Defaults to the current pay period when no inputs are supplied.",
+      "type": "server",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "presetId": {
+            "type": "string",
+            "description": "Pay-period chip identifier: 'current-pay-period' or 'last-pay-period'. Resolves against the rmo-copilot manifest's anchor (2026-01-05) and length (14 days). Wins when explicit from/to are omitted. Defaults to 'current-pay-period'."
+          },
+          "from": {
+            "type": "string",
+            "description": "Explicit window start in YYYY-MM-DD form. When both from and to are supplied, this pair overrides presetId."
+          },
+          "to": {
+            "type": "string",
+            "description": "Explicit window end in YYYY-MM-DD form (inclusive). Paired with from."
+          },
+          "driverName": {
+            "type": "string",
+            "description": "Optional case-insensitive substring filter on the recorded driver name. Useful when a single user has timesheets recorded for multiple drivers (rare; defaults to all of the calling user's timesheets)."
+          }
+        }
+      }
+    }
+  ],
+  "ragContent": {
+    "source": "./rag/trucking-regulations.json"
+  },
+  "branding": {
+    "colors": {
+      "primary": "#1B4D2D",
+      "secondary": "#B85C3A",
+      "accent": "#FF8C00"
+    },
+    "theme": "auto",
+    "timezone": "America/Edmonton",
+    "locale": "en-CA",
+    "renderers": {
+      "lookup_regulations": "./renderers/lookup_regulations.js",
+      "draft_timesheet": "./renderers/draft_timesheet.js",
+      "draft_dvir": "./renderers/draft_dvir.js",
+      "summarize_pay_period": "./renderers/summarize_pay_period.js",
+      "web_research": "./renderers/web_research.js"
+    },
+    "recordTypes": [
+      {
+        "type": "timesheet",
+        "label": "My Timesheets",
+        "toolName": "draft_timesheet",
+        "emptyLabel": "No timesheets recorded yet. Use the copilot to draft one."
+      },
+      {
+        "type": "dvir",
+        "label": "My DVIRs",
+        "toolName": "draft_dvir",
+        "emptyLabel": "No DVIRs recorded yet. Ask the copilot to walk you through a pre-trip inspection."
+      }
+    ],
+    "recordsFilterPresets": [
+      {
+        "id": "current-pay-period",
+        "label": "Current pay period",
+        "range": {
+          "kind": "pay-period",
+          "anchor": "2026-01-05",
+          "length": 14
+        }
+      },
+      {
+        "id": "last-pay-period",
+        "label": "Last pay period",
+        "range": {
+          "kind": "pay-period",
+          "anchor": "2026-01-05",
+          "length": 14,
+          "offset": -1
+        }
+      },
+      {
+        "id": "this-quarter",
+        "label": "This quarter",
+        "range": {
+          "kind": "calendar-quarter"
+        }
+      },
+      {
+        "id": "last-quarter",
+        "label": "Last quarter",
+        "range": {
+          "kind": "calendar-quarter",
+          "offset": -1
+        }
+      }
+    ]
+  }
+}
