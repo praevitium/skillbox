@@ -1,8 +1,8 @@
 /**
- * Lumber-Copilot — DVIR renderer helpers (Session 42).
+ * Lumber-Copilot — DVIR renderer helpers.
  *
  * Sibling module imported by draft_dvir.js via `ctx.loadSibling`. Same
- * multi-file pattern as `_field-helpers.js` (Session 35): the panel
+ * multi-file pattern as `_field-helpers.js`: the panel
  * propagates the parent's `?v=<manifest.version>` cache-bust tag onto
  * the sibling import so a manifest bump invalidates both modules
  * together.

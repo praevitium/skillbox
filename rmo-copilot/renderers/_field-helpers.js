@@ -1,5 +1,5 @@
 /**
- * Lumber-Copilot — shared renderer helpers (Session 35).
+ * Lumber-Copilot — shared renderer helpers.
  *
  * Sibling module imported by draft_timesheet.js via `ctx.loadSibling`.
  * Demonstrates the multi-file renderer pattern: a renderer can split

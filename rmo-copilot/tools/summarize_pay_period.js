@@ -16,7 +16,7 @@
  * in the wrong window. Worst-case cost is O(history size) per call; for a
  * driver shipping ~20 timesheets/month that's negligible. A real-deploy
  * Postgres backend could push the tripDate filter into the query layer
- * (see the Notes for future iterations in REVIEW.md), but the in-memory
+ * but the in-memory
  * + file backends iterate at the same cost either way.
  *
  * Auto-discovered by ratchet's SkillLoader (convention:

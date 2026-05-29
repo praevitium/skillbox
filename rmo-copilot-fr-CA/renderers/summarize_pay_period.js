@@ -70,10 +70,11 @@ export default async function register(ctx) {
 
     // Range subtitle — « Période de paie courante · 2026-05-08 → 2026-05-21 ».
     // The range.label fragment is the manifest-supplied preset label; the
-    // English primary emits "Current pay period" and the peer manifest
-    // emits "Période de paie courante" / "Période de paie précédente" via
-    // recordsFilterPresets (Session 53 manifest carries this — kept in
-    // line with the primary's chip config one-for-one).
+    // English primary emits "Current pay period" via its recordsFilterPresets
+    // chip config. The fr-CA manifest does NOT carry recordsFilterPresets —
+    // the French labels ("Période de paie courante" / "Période de paie
+    // précédente") come from this renderer's own formatWarningFrCA path and
+    // the tool handler's PRESET_LABELS when the tool resolves the range.
     const subtitle = document.createElement('div');
     subtitle.className = 'ratchet-tool-card-meta lc-payperiod-range';
     const fromTo =

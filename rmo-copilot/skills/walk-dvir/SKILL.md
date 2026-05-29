@@ -9,10 +9,10 @@ examples:
   - Record a DVIR for unit RMO-44 at Hinton yard, no defects
 ---
 
-Help the driver complete a DVIR per Alberta NSC Schedule 1. Collect the nine
-mandatory fields (carrierName, unitNumber, odometer, location, driverName,
-defectStatus, plus defects/defectNotes/photos/mechanic signature when
-relevant). Use the Schedule 1 categories — safety-equipment, braking,
+Help the driver complete a DVIR per Alberta NSC Schedule 1. Collect the six
+required fields (carrierName, unitNumber, odometer, location, driverName,
+defectStatus); the remaining fields (defects, defectNotes, photos,
+mechanicName, mechanicSignedAt) are conditional on the inspection outcome. Use the Schedule 1 categories — safety-equipment, braking,
 coupling, visibility, lights, tires-wheels, steering-suspension — to classify
 each defect; pick 'other' only when nothing else fits. When the driver
 confirms the details, call the draft_dvir tool to record the inspection; it
