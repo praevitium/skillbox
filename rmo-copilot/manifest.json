@@ -268,56 +268,6 @@
       "summarize_pay_period": "./renderers/summarize_pay_period.js",
       "web_research": "./renderers/web_research.js"
     },
-    "recordTypes": [
-      {
-        "type": "timesheet",
-        "label": "My Timesheets",
-        "toolName": "draft_timesheet",
-        "emptyLabel": "No timesheets recorded yet. Use the copilot to draft one."
-      },
-      {
-        "type": "dvir",
-        "label": "My DVIRs",
-        "toolName": "draft_dvir",
-        "emptyLabel": "No DVIRs recorded yet. Ask the copilot to walk you through a pre-trip inspection."
-      }
-    ],
-    "recordsFilterPresets": [
-      {
-        "id": "current-pay-period",
-        "label": "Current pay period",
-        "range": {
-          "kind": "pay-period",
-          "anchor": "2026-01-05",
-          "length": 14
-        }
-      },
-      {
-        "id": "last-pay-period",
-        "label": "Last pay period",
-        "range": {
-          "kind": "pay-period",
-          "anchor": "2026-01-05",
-          "length": 14,
-          "offset": -1
-        }
-      },
-      {
-        "id": "this-quarter",
-        "label": "This quarter",
-        "range": {
-          "kind": "calendar-quarter"
-        }
-      },
-      {
-        "id": "last-quarter",
-        "label": "Last quarter",
-        "range": {
-          "kind": "calendar-quarter",
-          "offset": -1
-        }
-      }
-    ],
     "onboarding": [
       {
         "title": "Welcome to your RMO copilot",
