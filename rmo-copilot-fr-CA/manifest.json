@@ -1,6 +1,6 @@
 {
   "name": "rmo-copilot-fr-CA",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "French (Canadian) label + locale + renderer overrides peer for the rmo-copilot skillbox. Ships on disk alongside the English primary; stays dormant unless SKILLBOX_ENABLE=rmo-copilot-fr-CA is set so the default demo deploy stays in English. Overrides all five rmo-copilot tool-result renderers: draft_timesheet + draft_dvir + summarize_pay_period + web_research + lookup_regulations. The lookup_regulations override translates the renderer chrome only; KB excerpts stay en-CA until a fr-CA RAG corpus surfaces.",
   "loadByDefault": false,
   "branding": {
@@ -64,7 +64,20 @@
       "attachFileLabel": "Joindre un fichier",
       "attachmentPreview": "Cliquer pour prévisualiser",
       "attachmentPreviewClose": "Fermer l’aperçu",
-      "disclaimerText": "Ratchet IA peut faire des erreurs. Veuillez vérifier les réponses."
+      "disclaimerText": "Ratchet IA peut faire des erreurs. Veuillez vérifier les réponses.",
+      "settingsTitle": "Paramètres",
+      "settingsLocale": "Langue",
+      "settingsTimezone": "Fuseau horaire",
+      "settingsEmail": "Courriel",
+      "settingsCompany": "Entreprise",
+      "settingsVehicle": "Véhicule",
+      "settingsSave": "Enregistrer",
+      "settingsCancel": "Annuler",
+      "editMessage": "Modifier",
+      "editConfirm": "Modifier ce message ? Les réponses suivantes seront supprimées.",
+      "tokenStats": "{prefix}{total} jetons ({prompt} entrée · {completion} sortie)",
+      "showcaseTitle": "Voici comment je peux vous aider",
+      "suggestionsLabel": "Essayez de demander :"
     }
   }
 }
