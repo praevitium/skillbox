@@ -51,7 +51,11 @@
       "feedbackCommentPlaceholder": "Qu'est-ce qui n'allait pas ? (facultatif)",
       "feedbackCommentSend": "Envoyer",
       "feedbackThanks": "Merci pour vos commentaires.",
-      "contextMeter": "{prefix}{session} jetons · {percent} % du contexte"
+      "contextMeter": "{prefix}{session} jetons · {percent} % du contexte",
+      "copyMessage": "Copier",
+      "copyMessageCopied": "Copié",
+      "regenerate": "Régénérer",
+      "regenerateConfirm": "Régénérer cette réponse ? La réponse actuelle sera remplacée."
     }
   }
 }
