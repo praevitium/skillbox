@@ -3,8 +3,8 @@
  *
  * French (Canadian) override for the rmo-copilot primary's
  * lookup_regulations renderer. Completes the fr-CA peer renderer set:
- * the peer now overrides all five rmo-copilot tool-result renderers
- * (draft_timesheet + draft_dvir + summarize_pay_period + web_research +
+ * the peer now overrides all rmo-copilot tool-result renderers
+ * (draft_timesheet + draft_dvir + summarize_pay_period + web_search +
  * lookup_regulations).
  *
  * Mirrors the English primary's DOM shape and CSS class names one-for-one
@@ -21,7 +21,7 @@
  * Scope — translate the chrome, not the data: the header/footer/note are
  * renderer-owned copy and are translated; the KB excerpts the cards paint
  * are whatever the trucking-regulations corpus returned (currently en-CA)
- * and stay as-is. This is the same posture web_research takes with its
+ * and stay as-is. This is the same posture web_search takes with its
  * source excerpts (Session 64). A fr-CA RAG corpus would be a separate
  * slice; until then a fr-CA driver still gets French chrome over the
  * shared en-CA citations — strictly better than English chrome.

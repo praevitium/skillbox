@@ -1,6 +1,6 @@
 {
   "name": "rmo-copilot",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "Rocky Mountain Outlaws lumber + trucking copilot skills, tools, and KB.",
   "tools": [
     {
@@ -191,9 +191,9 @@
       }
     },
     {
-      "id": "web_research",
+      "id": "web_search",
       "name": "Search the web",
-      "description": "Search the public web for current information not in the regulations KB. Returns web results with source URLs. Use for current events, diesel prices, weather, road conditions, news. Supports Tavily (premium), Brave Search, or DuckDuckGo (free fallback).",
+      "description": "Search the public web for current information not in the regulations KB. Returns a ranked list of results (title, short excerpt, URL) — NOT full page contents. Use for current events, diesel prices, weather, road conditions, news. When a result looks promising, call web_fetch with its URL to read the page in depth. If the first search comes up empty or irrelevant, reformulate the query and search again before giving up. Supports Tavily (premium), Brave Search, or DuckDuckGo (free fallback).",
       "type": "server",
       "inputSchema": {
         "type": "object",
@@ -217,6 +217,28 @@
         },
         "required": [
           "query"
+        ]
+      }
+    },
+    {
+      "id": "web_fetch",
+      "name": "Fetch a web page",
+      "description": "Fetch a single web page by URL and return its readable text, so you can read a result in depth rather than relying on the short excerpt from web_search. Typical flow: web_search to find candidate URLs, then web_fetch on the most promising one. If a fetched page doesn't answer the question, fetch another result or refine the search. Only http(s) URLs are supported.",
+      "type": "server",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Absolute http(s) URL to fetch, e.g. a result URL returned by web_search."
+          },
+          "maxChars": {
+            "type": "integer",
+            "description": "Maximum characters of readable text to return (500-20000). Defaults to 8000. Increase when a page is long and the answer wasn't in the first chunk."
+          }
+        },
+        "required": [
+          "url"
         ]
       }
     },
@@ -266,7 +288,8 @@
       "draft_timesheet": "./renderers/draft_timesheet.js",
       "draft_dvir": "./renderers/draft_dvir.js",
       "summarize_pay_period": "./renderers/summarize_pay_period.js",
-      "web_research": "./renderers/web_research.js"
+      "web_search": "./renderers/web_search.js",
+      "web_fetch": "./renderers/web_fetch.js"
     },
     "onboarding": [
       {

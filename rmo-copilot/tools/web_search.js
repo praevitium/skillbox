@@ -1,9 +1,9 @@
 /**
- * Server-side handler for the `web_research` tool.
+ * Server-side handler for the `web_search` tool.
  *
  * Searches the public web for information the LLM needs to ground an
  * answer. Pairs with `lookup_regulations` — the copilot should reach
- * for the KB first, and fall back to `web_research` when the question
+ * for the KB first, and fall back to `web_search` when the question
  * is current-events, vendor-specific, or simply not covered locally.
  *
  * Auto-discovered by ratchet's SkillLoader (convention:
@@ -119,7 +119,7 @@ export default async function webResearch(args, _context) {
       query,
       provider: 'none',
       fromWeb: false,
-      note: 'No HTTP client available — web_research requires Node 18+ (global fetch) or a configured fetch shim.',
+      note: 'No HTTP client available — web_search requires Node 18+ (global fetch) or a configured fetch shim.',
     };
   }
 
@@ -469,7 +469,7 @@ async function postForm(fetcher, url, params, timeoutMs) {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Accept: 'text/html,application/xhtml+xml',
-        'User-Agent': 'Mozilla/5.0 (compatible; ratchet/web_research; +local)',
+        'User-Agent': 'Mozilla/5.0 (compatible; ratchet/web_search; +local)',
       },
       body: params.toString(),
     }),
