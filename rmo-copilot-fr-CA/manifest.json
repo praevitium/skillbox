@@ -43,6 +43,7 @@
       "rendererError": "Échec du rendu pour {tool}.",
       "rendererErrorRow": "{tool} · {count} erreur(s) · {message}",
       "rendererErrorPayload": "Voir la charge utile",
+      "rendererErrorPayloadHistory": "Voir l’historique",
       "hostIndicatorSweepDegraded": "{failed} types de dossiers en échec",
       "hostIndicatorSweepDegradedSingular": "1 type de dossier en échec",
       "hostIndicatorRendererError": "erreur de rendu : {tool}",
@@ -55,7 +56,15 @@
       "copyMessage": "Copier",
       "copyMessageCopied": "Copié",
       "regenerate": "Régénérer",
-      "regenerateConfirm": "Régénérer cette réponse ? La réponse actuelle sera remplacée."
+      "regenerateConfirm": "Régénérer cette réponse ? La réponse actuelle sera remplacée.",
+      "followupsLabel": "Suggestions",
+      "inputPlaceholder": "Posez une question sur les règlements, DVIR, feuilles de temps…",
+      "attachPhotoLabel": "Prendre une photo",
+      "attachAudioLabel": "Enregistrer un audio",
+      "attachFileLabel": "Joindre un fichier",
+      "attachmentPreview": "Cliquer pour prévisualiser",
+      "attachmentPreviewClose": "Fermer l’aperçu",
+      "disclaimerText": "Ratchet IA peut faire des erreurs. Veuillez vérifier les réponses."
     }
   }
 }
