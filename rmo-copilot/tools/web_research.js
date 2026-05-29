@@ -39,14 +39,16 @@
  *
  * `appliedFilters` reports which of the *requested* filters the selected
  * provider actually honoured at its API layer. Tavily and Brave map both
- * `recency` and `region` onto provider parameters; DuckDuckGo's Instant
- * Answer endpoint supports neither, so it reports `[]` even when the caller
- * asked for them. The renderer uses this to distinguish "filtered" from
- * "requested but ignored" — a requested filter missing from `appliedFilters`
- * is painted with a "(not applied)" annotation. It is included only when at
- * least one filter resolved (an unfiltered search omits it), and only on the
- * success path — a provider that threw never reported what it applied, so the
- * catch path echoes the requested filters without an `appliedFilters` array.
+ * `recency` and `region` onto provider parameters; the DuckDuckGo HTML SERP
+ * exposes `kl`/`df`, but those don't map cleanly from our `en-CA`/`recency`
+ * contract, so the DDG provider deliberately applies neither and reports `[]`
+ * even when the caller asked for them. The renderer uses this to distinguish
+ * "filtered" from "requested but ignored" — a requested filter missing from
+ * `appliedFilters` is painted with a "(not applied)" annotation. It is included
+ * only when at least one filter resolved (an unfiltered search omits it), and
+ * only on the success path — a provider that threw never reported what it
+ * applied, so the catch path echoes the requested filters without an
+ * `appliedFilters` array.
  *
  * The `sources` shape mirrors `lookup_regulations` so the default
  * `renderSourceCards` renderer paints citation cards for free; the LLM
@@ -58,8 +60,8 @@
  *     Valid: 'tavily' | 'brave' | 'duckduckgo'.
  *   - Otherwise, if `TAVILY_API_KEY` is set → tavily.
  *   - Otherwise, if `BRAVE_SEARCH_API_KEY` is set → brave.
- *   - Otherwise → duckduckgo (the key-free fallback; limited to
- *     Instant Answers + related topics, but useful for the demo).
+ *   - Otherwise → duckduckgo (the key-free fallback; scrapes the DDG
+ *     HTML SERP for a real ranked result list — see `searchDuckDuckGo`).
  *
  * No approval gate — searching the public web is a read. A host that
  * wants human-in-the-loop confirmation can flip `requiresApproval: true`
@@ -303,77 +305,142 @@ async function searchBrave(query, opts) {
 }
 
 /**
- * DuckDuckGo Instant Answer API — key-free fallback. Limited to
- * disambiguation pages, instant answers, and related topics — NOT a
- * full SERP. Adequate for the demo path and any query that DDG has a
- * structured answer for; falls back to RelatedTopics for topical
- * queries.
+ * DuckDuckGo HTML SERP — key-free fallback. Unlike the Instant Answer
+ * API (which only returns disambiguation pages + related topics and is
+ * empty for most real queries), the HTML endpoint returns a genuine
+ * ranked result list. We POST the query form-encoded and scrape the
+ * `result__a` (title + link) / `result__snippet` (excerpt) anchors out
+ * of the returned markup, unwrapping DDG's `/l/?uddg=` redirect into the
+ * real target URL.
  *
- * Endpoint: api.duckduckgo.com/?q=<query>&format=json&no_html=1
+ * Endpoint: POST https://html.duckduckgo.com/html/  (q=<query>&kl=wt-wt)
  *
- * Recency / region are not supported by this endpoint; we accept the
- * args and silently ignore them so the contract stays stable.
+ * Tradeoff: this depends on DDG's HTML structure and is rate-limited —
+ * fine for a demo / key-free path, not a production SLA. Configure a
+ * Tavily or Brave key for a stable full-web API.
+ *
+ * Recency / region: the HTML endpoint exposes `df`/`kl`, but neither maps
+ * cleanly from our `recency` enum / BCP-47 `region`, so we apply neither
+ * and report `appliedFilters: []` — keeping the renderer's "(not applied)"
+ * annotation honest.
  */
 async function searchDuckDuckGo(query, opts) {
-  const params = new URLSearchParams({
-    q: query,
-    format: 'json',
-    no_html: '1',
-    skip_disambig: '1',
-  });
-  const data = await getJson(
+  const params = new URLSearchParams({ q: query, kl: 'wt-wt' });
+  const html = await postForm(
     opts.fetch,
-    `https://api.duckduckgo.com/?${params.toString()}`,
-    { Accept: 'application/json' },
+    'https://html.duckduckgo.com/html/',
+    params,
     REQUEST_TIMEOUT_MS
   );
 
-  const sources = [];
-  if (data && typeof data === 'object') {
-    if (data.AbstractText && data.AbstractURL) {
-      sources.push({
-        id: 'ddg-abstract',
-        title: stringOr(data.Heading, 'Result'),
-        url: data.AbstractURL,
-        excerpt: stringOr(data.AbstractText, ''),
-      });
-    }
-    if (Array.isArray(data.Results)) {
-      for (const r of data.Results) {
-        if (sources.length >= opts.limit) break;
-        if (r && r.FirstURL) {
-          sources.push({
-            id: `ddg-result-${sources.length + 1}`,
-            title: stringOr(r.Text, r.FirstURL),
-            url: r.FirstURL,
-            excerpt: stringOr(r.Text, ''),
-          });
-        }
-      }
-    }
-    if (Array.isArray(data.RelatedTopics)) {
-      for (const t of data.RelatedTopics) {
-        if (sources.length >= opts.limit) break;
-        if (t && t.FirstURL) {
-          sources.push({
-            id: `ddg-related-${sources.length + 1}`,
-            title: stringOr(t.Text, t.FirstURL),
-            url: t.FirstURL,
-            excerpt: stringOr(t.Text, ''),
-          });
-        }
-      }
-    }
-  }
+  const sources = parseDdgResults(html, opts.limit).map((r, idx) => ({
+    id: `ddg-${idx + 1}`,
+    title: stringOr(r.title, r.url || 'Untitled'),
+    url: r.url || undefined,
+    excerpt: stringOr(r.excerpt, ''),
+  }));
 
   const note =
     sources.length === 0
-      ? 'DuckDuckGo Instant Answer returned nothing for this query. Configure TAVILY_API_KEY or BRAVE_SEARCH_API_KEY for richer full-web results.'
+      ? 'DuckDuckGo returned no parseable results for this query. Configure TAVILY_API_KEY or BRAVE_SEARCH_API_KEY for richer full-web results.'
       : undefined;
-  // DDG's Instant Answer endpoint honours neither recency nor region, so it
-  // never applies a requested filter — report an empty set so the renderer
-  // can annotate any requested filter as "(not applied)".
   return { sources, note, appliedFilters: [] };
+}
+
+/**
+ * Scrape `{ title, url, excerpt }` triples out of DuckDuckGo's HTML SERP.
+ *
+ * Each result wraps an `<a class="result__a" href="…">title</a>` followed
+ * by an `<a class="result__snippet">excerpt</a>`. We walk anchors in
+ * document order: a `result__a` opens a pending result; the next
+ * `result__snippet` closes and emits it (results without a snippet are
+ * skipped, mirroring the reference parser). URLs are de-duplicated and the
+ * list is capped at `limit`. No DOM dependency — a light anchor scan is
+ * enough and keeps the handler runnable under plain Node.
+ */
+function parseDdgResults(html, limit) {
+  if (typeof html !== 'string' || !html) return [];
+  const anchorRe = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
+  const collected = [];
+  let cur = null;
+  let m;
+  while ((m = anchorRe.exec(html)) !== null) {
+    const attrs = m[1];
+    const inner = m[2];
+    const cls = attrMatch(attrs, 'class');
+    if (cls.includes('result__a')) {
+      cur = {
+        title: decodeEntities(stripTags(inner)).trim(),
+        url: cleanDdgHref(attrMatch(attrs, 'href')),
+        excerpt: '',
+      };
+    } else if (cls.includes('result__snippet') && cur) {
+      cur.excerpt = decodeEntities(stripTags(inner)).trim();
+      collected.push(cur);
+      cur = null;
+    }
+  }
+
+  const seen = new Set();
+  const out = [];
+  for (const r of collected) {
+    if (!r.url || seen.has(r.url)) continue;
+    seen.add(r.url);
+    out.push(r);
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
+function attrMatch(attrs, name) {
+  const m = new RegExp(`${name}\\s*=\\s*"([^"]*)"`, 'i').exec(attrs || '');
+  return m ? m[1] : '';
+}
+
+function stripTags(s) {
+  return String(s).replace(/<[^>]*>/g, '');
+}
+
+/**
+ * DDG wraps result links as `//duckduckgo.com/l/?uddg=<encoded-url>&…`.
+ * Unwrap to the real target; pass through already-absolute hrefs.
+ */
+function cleanDdgHref(href) {
+  if (!href) return '';
+  let h = decodeEntities(href);
+  if (h.startsWith('//')) h = 'https:' + h;
+  try {
+    const u = new URL(h, 'https://duckduckgo.com');
+    if (u.pathname.endsWith('/l/') || u.searchParams.has('uddg')) {
+      const target = u.searchParams.get('uddg');
+      if (target) return target;
+    }
+    return u.href;
+  } catch {
+    return h;
+  }
+}
+
+/** Decode the handful of HTML entities DDG emits in titles, snippets, hrefs. */
+function decodeEntities(s) {
+  return String(s)
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#0*39;|&#x0*27;|&apos;/gi, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#(\d+);/g, (_, d) => safeCodePoint(parseInt(d, 10)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => safeCodePoint(parseInt(h, 16)));
+}
+
+function safeCodePoint(cp) {
+  if (!Number.isFinite(cp) || cp < 0 || cp > 0x10ffff) return '';
+  try {
+    return String.fromCodePoint(cp);
+  } catch {
+    return '';
+  }
 }
 
 async function postJson(fetcher, url, body, timeoutMs) {
@@ -393,6 +460,23 @@ async function getJson(fetcher, url, headers, timeoutMs) {
   const res = await withTimeout(fetcher(url, { headers }), timeoutMs);
   if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
   return res.json();
+}
+
+async function postForm(fetcher, url, params, timeoutMs) {
+  const res = await withTimeout(
+    fetcher(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'text/html,application/xhtml+xml',
+        'User-Agent': 'Mozilla/5.0 (compatible; ratchet/web_research; +local)',
+      },
+      body: params.toString(),
+    }),
+    timeoutMs
+  );
+  if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
+  return res.text();
 }
 
 function withTimeout(promise, ms) {
