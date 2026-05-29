@@ -1,6 +1,6 @@
 {
   "name": "rmo-copilot-fr-CA",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "French (Canadian) label + locale + renderer overrides peer for the rmo-copilot skillbox. Ships on disk alongside the English primary; stays dormant unless SKILLBOX_ENABLE=rmo-copilot-fr-CA is set so the default demo deploy stays in English. Overrides all five rmo-copilot tool-result renderers: draft_timesheet + draft_dvir + summarize_pay_period + web_research + lookup_regulations. The lookup_regulations override translates the renderer chrome only; KB excerpts stay en-CA until a fr-CA RAG corpus surfaces.",
   "loadByDefault": false,
   "branding": {
@@ -77,7 +77,38 @@
       "editConfirm": "Modifier ce message ? Les réponses suivantes seront supprimées.",
       "tokenStats": "{prefix}{total} jetons ({prompt} entrée · {completion} sortie)",
       "showcaseTitle": "Voici comment je peux vous aider",
-      "suggestionsLabel": "Essayez de demander :"
-    }
+      "suggestionsLabel": "Essayez de demander :",
+      "onboardingNext": "Suivant",
+      "onboardingBack": "Précédent",
+      "onboardingSkip": "Passer",
+      "onboardingDone": "Compris",
+      "onboardingReplay": "Afficher le guide",
+      "onboardingProgress": "{current} sur {total}"
+    },
+    "onboarding": [
+      {
+        "title": "Bienvenue à votre copilote RMO",
+        "body": "Je vous aide avec les feuilles de temps, les inspections et les règlements de camionnage. Posez vos questions en langage courant dans la zone ci-dessous."
+      },
+      {
+        "title": "Consulter les règlements",
+        "body": "Besoin d'une limite de poids, d'un calcul d'heures de service ou d'une vérification d'interdiction routière ? Demandez-moi. Je cite la base de connaissances des règlements pour que vous puissiez vous y fier.",
+        "example": "Quelles sont les limites de poids en Alberta pour un tridem ?"
+      },
+      {
+        "title": "Remplir un RIVC",
+        "body": "Je peux vous guider étape par étape dans un rapport d'inspection du véhicule par le conducteur — catégories de défauts, signatures et ce qui constitue un défaut majeur. Je confirme avec vous avant d'enregistrer quoi que ce soit.",
+        "example": "Aidez-moi à remplir mon inspection préalable"
+      },
+      {
+        "title": "Vérifier vos heures",
+        "body": "Demandez-moi de cumuler vos feuilles de temps pour une période de paie. Je totalise vos heures de conduite et de service et signale tout dépassement de 70 heures sur 7 jours.",
+        "example": "Résumez ma dernière période de paie"
+      },
+      {
+        "title": "Retrouver ce guide",
+        "body": "Touchez le point d'interrogation dans la barre du haut à tout moment pour revoir ce guide. Utilisez l'engrenage pour définir votre langue, votre fuseau horaire et votre véhicule."
+      }
+    ]
   }
 }

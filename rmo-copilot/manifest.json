@@ -1,6 +1,6 @@
 {
   "name": "rmo-copilot",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "Rocky Mountain Outlaws lumber + trucking copilot skills, tools, and KB.",
   "skills": [
     {
@@ -101,7 +101,9 @@
             "description": "Cosine weight in [0,1] when scoringMode is hybrid; lexical gets (1 - weight). Lower values (e.g. 0.3) bias toward literal-match scoring. Only consulted under hybrid mode."
           }
         },
-        "required": ["query"]
+        "required": [
+          "query"
+        ]
       }
     },
     {
@@ -142,7 +144,12 @@
             "description": "Free-text notes about route, stops, or unusual conditions (optional)."
           }
         },
-        "required": ["driverName", "tripDate", "hoursDriving", "hoursOnDuty"]
+        "required": [
+          "driverName",
+          "tripDate",
+          "hoursDriving",
+          "hoursOnDuty"
+        ]
       }
     },
     {
@@ -193,7 +200,9 @@
                   "description": "Free-text description of the defect."
                 }
               },
-              "required": ["description"]
+              "required": [
+                "description"
+              ]
             }
           },
           "defectNotes": {
@@ -215,7 +224,9 @@
                   "description": "Optional caption describing what the photo shows."
                 }
               },
-              "required": ["url"]
+              "required": [
+                "url"
+              ]
             }
           },
           "mechanicName": {
@@ -262,7 +273,9 @@
             "description": "BCP-47 locale ('en-CA') or ISO country code ('CA') for region-biased ranking. Silently ignored on providers that don't expose a region knob."
           }
         },
-        "required": ["query"]
+        "required": [
+          "query"
+        ]
       }
     },
     {
@@ -360,6 +373,31 @@
           "kind": "calendar-quarter",
           "offset": -1
         }
+      }
+    ],
+    "onboarding": [
+      {
+        "title": "Welcome to your RMO copilot",
+        "body": "I help with timesheets, inspections, and trucking regulations. Ask anything in plain language — type your question in the box below."
+      },
+      {
+        "title": "Look up the rules",
+        "body": "Need a weight limit, an hours-of-service clock, or a road-ban check? Just ask. I cite the trucking-regulations knowledge base so you can trust the answer.",
+        "example": "What are Alberta weight limits for a tridem?"
+      },
+      {
+        "title": "File a DVIR",
+        "body": "I can walk you through a Driver Vehicle Inspection Report step by step — defect categories, signatures, and what counts as a major defect. I confirm with you before recording anything.",
+        "example": "Help me fill out my pre-trip inspection"
+      },
+      {
+        "title": "Check your hours",
+        "body": "Ask me to roll up your timesheets for a pay period. I total your driving and on-duty hours and flag any 70-hours-in-7-days breaches.",
+        "example": "Summarize my last pay period"
+      },
+      {
+        "title": "Find this again",
+        "body": "Tap the question-mark in the top bar any time to replay this walkthrough. Use the gear to set your language, timezone, and vehicle."
       }
     ]
   }
