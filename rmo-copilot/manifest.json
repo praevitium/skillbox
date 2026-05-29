@@ -312,7 +312,7 @@
   "branding": {
     "colors": {
       "primary": "#1B4D2D",
-      "secondary": "#B85C3A",
+      "secondary": "#8FC93A",
       "accent": "#FF8C00"
     },
     "theme": "auto",
