@@ -75,6 +75,8 @@
       "settingsCancel": "Annuler",
       "editMessage": "Modifier",
       "editConfirm": "Modifier ce message ? Les réponses suivantes seront supprimées.",
+      "editingNotice": "Modification du message",
+      "editCancel": "Annuler la modification",
       "tokenStats": "{prefix}{total} jetons ({prompt} entrée · {completion} sortie)",
       "showcaseTitle": "Voici comment je peux vous aider",
       "suggestionsLabel": "Essayez de demander :",
