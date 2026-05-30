@@ -1,6 +1,6 @@
 {
   "name": "rmo-copilot-fr-CA",
-  "version": "0.20.0",
+  "version": "0.22.0",
   "description": "French (Canadian) label + locale + renderer overrides peer for the rmo-copilot skillbox. Ships on disk alongside the English primary; stays dormant unless SKILLBOX_ENABLE=rmo-copilot-fr-CA is set so the default demo deploy stays in English. Overrides the rmo-copilot tool-result renderers: draft_timesheet + draft_dvir + summarize_pay_period + web_search + web_fetch + lookup_regulations. The lookup_regulations override translates the renderer chrome only; KB excerpts stay en-CA until a fr-CA RAG corpus surfaces.",
   "loadByDefault": false,
   "branding": {
@@ -91,6 +91,7 @@
       "renameConversation": "Renommer la conversation",
       "searchConversations": "Rechercher des conversations",
       "searchNoResults": "Aucun résultat pour",
+      "conversationsEmpty": "Aucune conversation pour l'instant",
       "pinConversation": "Épingler la conversation",
       "unpinConversation": "Désépingler la conversation",
       "deleteConversation": "Supprimer la conversation",
