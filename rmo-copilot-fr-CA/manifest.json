@@ -98,7 +98,10 @@
       "deleteConfirm": "Supprimer cette conversation ? Cette action est irréversible.",
       "confirmationCancel": "Annuler",
       "confirmationConfirm": "Confirmer",
-      "duplicateConversation": "Dupliquer la conversation"
+      "duplicateConversation": "Dupliquer la conversation",
+      "approveAction": "Approuver",
+      "rejectAction": "Rejeter",
+      "approvalFailed": "Échec de l'approbation : {message}"
     },
     "onboarding": [
       {
